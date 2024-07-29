@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { Sequelize } from 'sequelize';
 require('dotenv').config();
 
 const sequelize: Sequelize = new Sequelize(
@@ -7,10 +7,12 @@ const sequelize: Sequelize = new Sequelize(
     process.env.DB_PASSWORD,
     {
         host: process.env.DB_HOST ?? 'localhost',
-        dialect: 'mysql', // depends on database type
+        dialect: 'mysql',
         logging: false,
     }
 );
+
+
 
 const testConnection = async (): Promise<boolean> => {
     try {
@@ -32,8 +34,8 @@ export const connectToDatabase = (async () => {
     console.log('Connection successful');
 })
 
-export const closeConnection = async () => {
+ const closeConnection = async () => {
     await sequelize.close();
 }
 
-export const db: any = sequelize;
+export default sequelize;
