@@ -1,7 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import dotenv from 'dotenv';
-
-dotenv.config();
+require('dotenv').config();
 
 const sequelize: Sequelize = new Sequelize(
     process.env.DB_NAME ?? 'sequelizeJWT',
@@ -9,15 +7,15 @@ const sequelize: Sequelize = new Sequelize(
     process.env.DB_PASSWORD,
     {
         host: process.env.DB_HOST ?? 'localhost',
-        dialect: 'mysql',
+        dialect: 'mysql', // depends on database type
         logging: false,
     }
 );
 
 const testConnection = async (): Promise<boolean> => {
     try {
-        await sequelize.authenticate();
-        console.log('Connected to the database.');
+        await sequelize.authenticate()
+            .then(() => console.log('Connected to the database.'));
         return true;
     } catch (error) {
         console.error('Unable to connect to the database:', error);
@@ -36,7 +34,7 @@ const connectToDatabase = async () => {
 
 connectToDatabase().then(
     () => {
-        console.log('Database connection established');
+        console.log('Database connection established')
     },
     (error) => {
         console.error('Error connecting to database:', error);

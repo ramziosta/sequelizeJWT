@@ -2,7 +2,6 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import  {db} from './config/database';
 const corsOptions = {
     origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204

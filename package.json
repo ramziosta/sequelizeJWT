@@ -1,5 +1,5 @@
 {
-  "name": "sequelizeJWT",
+  "name": "sequelizejwt",
   "version": "1.0.0",
   "description": "SQL Sequelize Node.js JWT blogging app",
   "main": "src/server/server.ts",
