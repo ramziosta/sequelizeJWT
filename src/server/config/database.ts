@@ -12,15 +12,13 @@ const sequelize: Sequelize = new Sequelize(
     }
 );
 
-
-
 const testConnection = async (): Promise<boolean> => {
     try {
         await sequelize.authenticate()
-            .then(() => console.log('Connected to the database.'));
+            .then(() => console.log('🔌 Connected to the database.'));
         return true;
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        console.error('‼️Unable to connect to the database:', error);
         return false;
     }
 };
@@ -28,10 +26,10 @@ const testConnection = async (): Promise<boolean> => {
 export const connectToDatabase = (async () => {
     const isConnected = await testConnection();
     if (!isConnected) {
-        console.error('Failed to connect to database. Exiting...');
+        console.error('‼️ Failed to connect to database. Exiting...');
         process.exit(1);
     }
-    console.log('Connection successful');
+    console.log('🪢 Connection successful');
 })
 
  const closeConnection = async () => {

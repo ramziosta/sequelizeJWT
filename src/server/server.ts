@@ -3,6 +3,7 @@ import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { connectToDatabase } from './config/database';
+import syncDatabase from './models/sync';
 
 const corsOptions = {
     origin: 'http://localhost:3000',
@@ -29,3 +30,7 @@ app.listen(PORT, () => {
 });
 
 connectToDatabase();
+
+syncDatabase().then(() => {
+    console.log('📈 Database synced successfully');
+});

@@ -14,14 +14,16 @@ Comment.belongsTo(User);
 
 const syncDatabase = async () => {
     try {
-        // Sync all models
-        await sequelize.sync({ force: true }); // Use `force: true` to drop and recreate tables.
+        await sequelize.sync({ force: true }); // Sync all models
         console.log('Database synced successfully.');
+
+        // Use queryInterface to list tables
+        const queryInterface = sequelize.getQueryInterface();
+        const tables: string[] = await queryInterface.showAllTables();
+        console.log('📊 Tables in the database:', tables);
     } catch (error) {
-        console.error('Error syncing database:', error);
+        console.error('‼️Error syncing database:', error);
     }
 };
 
-syncDatabase().then(() => {
-    console.log('Database synced successfully.');
-});
+export default syncDatabase;
