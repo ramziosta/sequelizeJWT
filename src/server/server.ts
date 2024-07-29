@@ -2,6 +2,8 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { connectToDatabase } from './config/database';
+
 const corsOptions = {
     origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -25,3 +27,5 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
+
+connectToDatabase();

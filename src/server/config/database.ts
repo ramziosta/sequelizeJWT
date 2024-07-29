@@ -23,23 +23,17 @@ const testConnection = async (): Promise<boolean> => {
     }
 };
 
-const connectToDatabase = async () => {
+export const connectToDatabase = (async () => {
     const isConnected = await testConnection();
     if (!isConnected) {
         console.error('Failed to connect to database. Exiting...');
         process.exit(1);
     }
     console.log('Connection successful');
-};
+})
 
-connectToDatabase().then(
-    () => {
-        console.log('Database connection established')
-    },
-    (error) => {
-        console.error('Error connecting to database:', error);
-    }
-);
-
+export const closeConnection = async () => {
+    await sequelize.close();
+}
 
 export const db: any = sequelize;
