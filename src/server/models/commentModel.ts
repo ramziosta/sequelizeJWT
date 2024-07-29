@@ -1,10 +1,11 @@
 import sequelize from '../config/database'
 import {DataTypes} from 'sequelize'
-import Users from './userModels'
-import Posts from './postModels'
-import Categories from "./categoryModels";
+import Users from './userModel'
+import Posts from './postModel'
+import Categories from "./categoryModel";
 
-const Comments = sequelize.define('comment',
+const Comments = sequelize.define(
+    'comment',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -39,6 +40,10 @@ const Comments = sequelize.define('comment',
             },
             allowNull: false,
         },
+    },
+    {
+        freezeTableName: true,
+        timestamps: true
     }
 );
 

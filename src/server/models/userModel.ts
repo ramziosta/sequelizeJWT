@@ -8,6 +8,7 @@ const Users = sequelize.define(
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
+
         },
         name: {
             type: DataTypes.STRING,
@@ -29,6 +30,7 @@ const Users = sequelize.define(
 
     },
     {
+        freezeTableName: true,
         timestamps: true
     }
 );

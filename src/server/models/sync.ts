@@ -1,20 +1,27 @@
 import sequelize from '../config/database';
-import User from './userModels';
-import Post from './postModels';
-import Category from './categoryModels';
-import Comment from './commentModels';
+import User from './userModel';
+import Post from './postModel';
+import Category from './categoryModel';
+import Comment from './commentModel';
 
+//the user has many posts
 User.hasMany(Post);
+// the posts belong to many users
 Post.belongsTo(User);
-Post.belongsToMany(Category, { through: 'PostCategories' });
-Category.belongsToMany(Post, { through: 'PostCategories' });
+// the post has many different categories
+Post.belongsToMany(Category, {through: 'post_categories'});
+// many categories to many different posts
+Category.belongsToMany(Post, {through: 'post_categories'});
+// each post can have many comments
 Post.hasMany(Comment);
+// each comment belong to one particular post
 Comment.belongsTo(Post);
+// each comment is associated with one user
 Comment.belongsTo(User);
 
 const syncDatabase = async () => {
     try {
-        await sequelize.sync({ force: true }); // Sync all models
+        await sequelize.sync({force: true}); // Sync all models
         console.log('Database synced successfully.');
 
         // Use queryInterface to list tables

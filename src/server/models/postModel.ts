@@ -1,8 +1,9 @@
 import sequelize from '../config/database';
 import {DataTypes} from 'sequelize';
-import User from './userModels';
+import User from './userModel';
 
-const Posts = sequelize.define('post',
+const Posts = sequelize.define(
+    'post',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -24,7 +25,11 @@ const Posts = sequelize.define('post',
                 key: 'id',
             },
             allowNull: false,
-        }
+        },
+    },
+    {
+        freezeTableName: true,
+        timestamps: true
     }
 );
 

@@ -1,7 +1,8 @@
 import sequelize from '../config/database';
 import {DataTypes} from 'sequelize';
 
-const Categories = sequelize.define('category',
+const Categories = sequelize.define(
+    'category',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -13,6 +14,10 @@ const Categories = sequelize.define('category',
             allowNull: false
         }
     },
+    {
+        freezeTableName: true,
+        timestamps: true
+    }
 );
 
 export default Categories;
