@@ -4,7 +4,7 @@ import Users from './userModel'
 import Posts from './postModel'
 import Categories from "./categoryModel";
 
-const Comments = sequelize.define(
+const Comment = sequelize.define(
     'comment',
     {
         id: {
@@ -41,11 +41,11 @@ const Comments = sequelize.define(
             allowNull: false,
         },
     },
-    {
-        freezeTableName: true,
-        timestamps: true
-    }
+    // {
+    //     freezeTableName: true,
+    //     timestamps: true
+    // }
 );
 
 
-export default Comments;
+export default Comment;

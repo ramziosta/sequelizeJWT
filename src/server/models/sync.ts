@@ -3,33 +3,28 @@ import User from './userModel';
 import Post from './postModel';
 import Category from './categoryModel';
 import Comment from './commentModel';
+import {QueryInterface} from "sequelize";
 
-//the user has many posts
+// Define model associations
 User.hasMany(Post);
-// the posts belong to many users
 Post.belongsTo(User);
-// the post has many different categories
-Post.belongsToMany(Category, {through: 'post_categories'});
-// many categories to many different posts
-Category.belongsToMany(Post, {through: 'post_categories'});
-// each post can have many comments
+Post.belongsToMany(Category, { through: 'post_categories' });
+Category.belongsToMany(Post, { through: 'post_categories' });
 Post.hasMany(Comment);
-// each comment belong to one particular post
 Comment.belongsTo(Post);
-// each comment is associated with one user
 Comment.belongsTo(User);
 
-const syncDatabase = async () => {
+const syncDatabase = async (): Promise<void> => {
     try {
-        await sequelize.sync({force: true}); // Sync all models
+        await sequelize.sync({ alter: true}); // Sync all models
         console.log('Database synced successfully.');
 
         // Use queryInterface to list tables
-        const queryInterface = sequelize.getQueryInterface();
+        const queryInterface: QueryInterface = sequelize.getQueryInterface();
         const tables: string[] = await queryInterface.showAllTables();
         console.log('📊 Tables in the database:', tables);
     } catch (error) {
-        console.error('‼️Error syncing database:', error);
+        console.error('‼️ Error syncing database:', error);
     }
 };
 

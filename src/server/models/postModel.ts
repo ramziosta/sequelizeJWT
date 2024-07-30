@@ -2,7 +2,7 @@ import sequelize from '../config/database';
 import {DataTypes} from 'sequelize';
 import User from './userModel';
 
-const Posts = sequelize.define(
+const Post = sequelize.define(
     'post',
     {
         id: {
@@ -27,11 +27,11 @@ const Posts = sequelize.define(
             allowNull: false,
         },
     },
-    {
-        freezeTableName: true,
-        timestamps: true
-    }
+    // {
+    //     freezeTableName: true,
+    //     timestamps: true
+    // }
 );
 
 
-export default Posts;
+export default Post;

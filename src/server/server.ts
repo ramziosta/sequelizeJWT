@@ -1,36 +1,39 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, {Express, Request, Response, NextFunction} from 'express';
 import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { connectToDatabase } from './config/database';
+import {connectToDatabase} from './config/database';
 import syncDatabase from './models/sync';
+import router from './routes/routes';
 
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
 
 const app: Express = express();
-const PORT: number | string = 3000 || process.env.PORT;
-
+const PORT: number | string = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use(cors(corsOptions));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.json()); // Parses incoming JSON requests
+app.use(express.urlencoded({ extended: true }));
+app.use('/', router);
+app.use('/users', router);
+app.use('/posts', router);
+app.use('/comment', router);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
     console.log('Hello World');
     res.send('Hello World');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-});
-
-connectToDatabase();
-
-syncDatabase().then(() => {
-    console.log('📈 Database synced successfully');
-});
+// Connect to database and sync models before starting the server
+connectToDatabase()
+    .then(() => syncDatabase())
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Server listening on port ${PORT}`);
+        });
+    })
+    .catch(error => {
+        console.error('Error during initialization:', error);
+        process.exit(1);
+    });

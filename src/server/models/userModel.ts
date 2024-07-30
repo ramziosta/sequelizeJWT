@@ -1,14 +1,13 @@
 import sequelize from '../config/database';
 import {DataTypes} from 'sequelize';
 
-const Users = sequelize.define(
+const User = sequelize.define(
     'user',
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-
         },
         name: {
             type: DataTypes.STRING,
@@ -27,12 +26,8 @@ const Users = sequelize.define(
             type: DataTypes.BOOLEAN,
             defaultValue: false
         }
+    });
 
-    },
-    {
-        freezeTableName: true,
-        timestamps: true
-    }
-);
 
-export default Users;
+
+export default User;

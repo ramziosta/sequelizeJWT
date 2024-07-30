@@ -9,31 +9,32 @@ const sequelize: Sequelize = new Sequelize(
         host: process.env.DB_HOST ?? 'localhost',
         dialect: 'mysql',
         logging: false,
+        define: {
+            timestamps: true,
+            freezeTableName: true,
+        }
     }
 );
 
 const testConnection = async (): Promise<boolean> => {
     try {
-        await sequelize.authenticate()
-            .then(() => console.log('🔌 Connected to the database.'));
+        await sequelize.authenticate();
+        console.log('🔌 Connected to the database.');
         return true;
     } catch (error) {
-        console.error('‼️Unable to connect to the database:', error);
+        console.error('‼️ Unable to connect to the database:', error);
         return false;
     }
 };
 
-export const connectToDatabase = (async () => {
-    const isConnected = await testConnection();
-    if (!isConnected) {
-        console.error('‼️ Failed to connect to database. Exiting...');
-        process.exit(1);
+export const connectToDatabase = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('🪢 Database connection established successfully.');
+    } catch (error) {
+        console.error('‼️ Unable to connect to the database:', error);
+        throw error;
     }
-    console.log('🪢 Connection successful');
-})
-
- const closeConnection = async () => {
-    await sequelize.close();
-}
+};
 
 export default sequelize;
