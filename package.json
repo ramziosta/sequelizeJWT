@@ -4,7 +4,7 @@
   "description": "SQL Sequelize Node.js JWT blogging app",
   "main": "src/server.ts",
   "scripts": {
-    "start": "node src/server/server.ts",
+    "start": "node src/server.ts",
     "dev": "nodemon",
     "build": "tsc",
     "prestart": "npm run build",
