@@ -2,9 +2,9 @@
   "name": "sequelizejwt",
   "version": "1.0.0",
   "description": "SQL Sequelize Node.js JWT blogging app",
-  "main": "src/server/server.ts",
+  "main": "src/server.ts",
   "scripts": {
-    "start": "node dist/server/server.js",
+    "start": "node src/server/server.ts",
     "dev": "nodemon",
     "build": "tsc",
     "prestart": "npm run build",
@@ -48,6 +48,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-validator": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.0",
     "sequelize": "^6.37.3"

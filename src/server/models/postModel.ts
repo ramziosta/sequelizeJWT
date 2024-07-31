@@ -10,20 +10,20 @@ const Post = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
+        userId: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'user',
+                key: 'id',
+            },
+            allowNull: false,
+        },
         title: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         content: {
             type: DataTypes.TEXT,
-            allowNull: false,
-        },
-        userId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: User,
-                key: 'id',
-            },
             allowNull: false,
         },
     },
