@@ -1,5 +1,8 @@
 import {Request, Response, NextFunction} from 'express';
-import User from '../models/userModel';
+import Post from '../models/postModel';
+import User from "../models/userModel";
+import Category from "../models/categoryModel";
+import Comment from "../models/commentModel";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     console.log('Request body:', req.body); // Debugging line
@@ -7,17 +10,6 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     const {name, email, password} = req.body as { name: string; email: string; password: string };
 
     try {
-        // Validate required fields
-        if (!name || !email || !password) {
-            return res.status(400).json({error: 'Missing required fields to create a new user'});
-        }
-
-        // Check if email already exists in the database
-        console.log('Checking if email is used:', email);
-        const existingUser = await User.findOne({where: {email}});
-        if (existingUser) {
-            return res.status(400).json({error: 'Email is already used, please use a different email'});
-        }
 
         // Add a new user
         const user = await User.create({

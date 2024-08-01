@@ -1,37 +1,73 @@
 import {Request, Response, NextFunction} from 'express';
+import User from '../models/userModel';
 import Post from '../models/postModel';
-import User from "../models/userModel";
+import Category from "../models/categoryModel";
+import PostCategories from "../models/postCategoriesModel";
+import Comment from "../models/commentModel";
+
+// Define types for categories
+interface CategoryInstance extends Category {
+    id: number;
+    name: string;
+}
 
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
-    const {title, content, userId} = req.body as { title: string; content: string, userId: number };
-    if (!userId) {
-        return res.status(400).json({error: 'Please enter a user id'});
-    }
     try {
-        // Validate required fields
-        if (!title || !content || !userId) {
-            return res.status(400).json({error: 'Please enter a post title and content'});
+        const {userId, title, content, category} = req.body as {
+            title: string;
+            content: string;
+            category: string[],
+            userId: number
+        };
+
+        // Check for existing categories and create new ones if necessary
+        const createdCategories: CategoryInstance[] = [];
+        for (const categoryName of category) {
+            let category: Category | null = await Category.findOne({where: {name: categoryName}});
+            if (!category) {
+                category = await Category.create({name: categoryName});
+                createdCategories.push(category as CategoryInstance);
+            } else {
+                createdCategories.push(category as CategoryInstance);
+            }
         }
 
-        // Create a new Post
-        const post = await Post.create({
-            userId, title, content
+        // Create the post
+        const post = await Post.create({userId, title, content});
+
+        // Create PostCategory records
+        const postCategories = category.map(name => {
+            const category = createdCategories.find(c => c.name === name);
+            if (!category) {
+                throw new Error(`Category ${name} not found in created categories`);
+            }
+            return {
+                postId: post.id,
+                categoryId: category.id
+            };
         });
 
-        // Send success response
-        res.status(201).json({
-            message: 'Post created successfully',
-            post: post.toJSON()
-        });
-
+        await PostCategories.bulkCreate(postCategories);
+        res.status(201).json(post);
     } catch (error) {
-        console.error('Error creating post:', error);
-        res.status(500).json({error: 'Internal server error'});
+        console.error(error);
+        res.status(500).json({error: 'Failed to create post'});
     }
 };
 
 export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
-    const posts = await Post.findAll();
+    const posts = await Post.findAll(
+        {
+            include: [
+                {
+                    model: Category,
+                },
+                {
+                    model: Comment,
+                },
+            ],
+        }
+    );
     if (posts.length === 0) {
         return res.status(404).json({error: 'No posts found'});
     }
@@ -45,7 +81,19 @@ export const getPostByPostId = async (req: Request, res: Response, next: NextFun
         return res.status(400).json({error: 'Please enter a post id'});
     }
 
-    const post = await Post.findByPk(postId)
+    const post = await Post.findByPk(
+        postId, {
+            include: [
+                {
+                    model: Category,
+                },
+
+                {
+                    model: Comment,
+                },
+            ],
+        });
+
     if (!post) {
         return res.status(404).json({error: 'Post not found'});
     }
@@ -60,7 +108,15 @@ export const getAllPostsByUserId = async (req: Request, res: Response, next: Nex
     }
 
     const posts = await Post.findAll({
-        where: {userId}
+        where: {userId},
+        include: [
+            {
+                model: Category,
+            },
+            {
+                model: Comment,
+            },
+        ],
     });
 
     if (posts.length === 0) {
@@ -72,26 +128,29 @@ export const getAllPostsByUserId = async (req: Request, res: Response, next: Nex
 
 export const updatePost = async (req: Request, res: Response, next: NextFunction) => {
     const {title, content} = req.body as { title: string, content: string };
-    ;
-    const {id} = req.params;
+    const {postId} = req.params;
 
-    if (!id) {
-        return res.status(400).json({error: 'Post ID is required'});
+    if (!postId) {
+        return res.status(400).json({error: 'Please enter a post id'});
     }
+
     if (!title || !content) {
         return res.status(400).json({error: 'Title and content are required'});
     }
 
     try {
-        const post = await Post.findByPk(id)
+        // Find the post
+        const post = await Post.findByPk(postId);
 
         if (!post) {
             return res.status(404).json({error: 'Post not found'});
         }
-        await post.set({title, content}).save();
 
+        // Update the post
+        await post.update({title, content});
+
+        // Return the updated post
         res.status(200).json({post});
-
     } catch (error) {
         console.error('Error updating post:', error);
         res.status(500).json({error: 'Internal server error'});
