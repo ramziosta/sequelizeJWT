@@ -9,7 +9,7 @@ interface CommentsAttributes {
     content: string,
     userId: number,
     postId: number,
-    categoryId: number
+    categoryId?: number
 }
 
 class Comment extends Model<CommentsAttributes> implements CommentsAttributes {
@@ -17,7 +17,7 @@ class Comment extends Model<CommentsAttributes> implements CommentsAttributes {
     public content!: string;
     public userId!: number;
     public postId!: number;
-    public categoryId!: number;
+    public categoryId?: number;
 }
 
 Comment.init({
