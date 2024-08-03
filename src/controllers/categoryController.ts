@@ -58,27 +58,28 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
 };
 
 export const getCategoriesByPostId = async (req: Request, res: Response, next: NextFunction) => {
-    const {postId} = req.params;
+    const { postId } = req.params;
 
     if (!postId) {
-        return res.status(400).json({error: 'Please enter a post id'});
+        return res.status(400).json({ error: 'Please enter a post id' });
     }
 
-    const post = await Post.findByPk(
-        postId, {
+    const postCategory = await PostCategories.findByPk(
+        postId,
+        {
             include: [
                 {
                     model: Category,
                 },
-
-                {
-                    model: Comment,
-                },
             ],
-        });
+        }
+    );
 
-    if (!post) {
-        return res.status(404).json({error: 'Post not found'});
+    if (!postCategory) {
+        return res.status(404).json({ error: 'Post not found' });
     }
-    res.status(200).json({post.category});
-}
+
+    const categories = Category.name;
+
+    res.status(200).json({ categories });
+};

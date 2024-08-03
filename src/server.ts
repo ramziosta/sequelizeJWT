@@ -12,13 +12,14 @@ const PORT: number | string = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
-
-app.use(express.json()); // Parses incoming JSON requests
+app.use(cors());
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/', router);
 app.use('/users', router);
 app.use('/posts', router);
 app.use('/comment', router);
+app.use('/category', router);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
     console.log('Hello World');

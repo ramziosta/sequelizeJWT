@@ -1,8 +1,20 @@
-import {DataTypes} from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 import sequelize from '../config/database';
 
+interface PostCategoriesAttributes {
+    id?: number;
+    postId: number;
+    categoryId: number;
+}
 
-const PostCategories = sequelize.define('post_categories', {
+
+class PostCategories extends Model<PostCategoriesAttributes> implements PostCategoriesAttributes {
+    public id?: number;
+    public postId!: number;
+    public categoryId!: number;
+}
+
+PostCategories.init({
         postId: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -21,19 +33,11 @@ const PostCategories = sequelize.define('post_categories', {
             },
             primaryKey: true,
         },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-        }
     },
-    // {
-    //     freezeTableName: true,
-    //     timestamps: true
-    // }
+    {
+        sequelize,
+        modelName: 'post_categories',
+    }
 );
 
 export default PostCategories;

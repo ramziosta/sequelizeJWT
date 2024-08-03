@@ -1,34 +1,35 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import {Model, DataTypes} from 'sequelize';
 import sequelize from '../config/database';
 import User from './userModel';
+import Category from './categoryModel';
+import PostCategories from './postCategoriesModel';
+import Comment from './commentModel';
 
-// Define the attributes for the Post model
+
 interface PostAttributes {
-    id: number;
+    id?: number;
     title: string;
     content: string;
     userId: number;
 }
 
-
-
-// Define the Post model class
-class Post extends Model<PostAttributes, any> implements PostAttributes {
+class Post extends Model {
     public id!: number;
     public title!: string;
     public content!: string;
     public userId!: number;
+
 }
 
-// Initialize the Post model
 Post.init({
     id: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
     },
     title: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     content: {
@@ -37,20 +38,16 @@ Post.init({
     },
     userId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
             model: User,
-            key: 'id',
+            key: 'id'
         },
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE'
     },
 }, {
     sequelize,
-    tableName: 'post',
-    //timestamps: true,
-    //freezeTableName: true,
+    modelName: 'post',
 });
-
-// Define associations if needed
-Post.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 export default Post;

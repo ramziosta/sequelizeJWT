@@ -1,14 +1,29 @@
 import sequelize from '../config/database'
-import {DataTypes} from 'sequelize'
+import {DataTypes, Model} from 'sequelize'
 import Users from './userModel'
 import Posts from './postModel'
-import Categories from "./categoryModel";
+import Category from "./categoryModel";
 
-const Comment = sequelize.define(
-    'comment',
-    {
+interface CommentsAttributes {
+    id?:number,
+    content: string,
+    userId: number,
+    postId: number,
+    categoryId: number
+}
+
+class Comment extends Model<CommentsAttributes> implements CommentsAttributes {
+    public id?: number;
+    public content!: string;
+    public userId!: number;
+    public postId!: number;
+    public categoryId!: number;
+}
+
+Comment.init({
         id: {
             type: DataTypes.INTEGER,
+            allowNull: false,
             autoIncrement: true,
             primaryKey: true,
         },
@@ -35,17 +50,19 @@ const Comment = sequelize.define(
         categoryId: {
             type: DataTypes.INTEGER,
             references: {
-                model: Categories,
+                model: Category,
                 key: 'id',
             },
             allowNull: false,
         },
     },
-    // {
-    //     freezeTableName: true,
-    //     timestamps: true
-    // }
+    {
+        sequelize,
+        tableName: 'comment',
+    }
 );
 
-
 export default Comment;
+
+//Comments.belongsTo(Users,{foreignKey: {name: 'user_id'}})
+

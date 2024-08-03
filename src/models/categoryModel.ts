@@ -1,17 +1,12 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 import sequelize from '../config/database';
 
-// Define the attributes for the Category model
 interface CategoryAttributes {
-    id: number;
+    id?: number;
     name: string;
 }
 
-// Define the optional attributes for the Category model
-interface CategoryCreationAttributes extends Optional<CategoryAttributes, 'id'> {}
-
-// Define the Category model class
-class Category extends Model<CategoryAttributes, CategoryCreationAttributes> implements CategoryAttributes {
+class Category extends Model<CategoryAttributes> implements CategoryAttributes {
     public id!: number;
     public name!: string;
 }
@@ -30,8 +25,6 @@ Category.init({
 }, {
     sequelize,
     tableName: 'category',
-    // timestamps: false,
-    // freezeTableName:
 });
 
 export default Category;
