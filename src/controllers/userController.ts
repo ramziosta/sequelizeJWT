@@ -1,7 +1,16 @@
 import {Request, Response, NextFunction} from 'express';
 import User from "../models/userModel";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
+
+export const createToken = (id: number) => jwt.sign(
+    /* payload */
+    {id},
+    /* secret */
+    process.env.ACCESS_TOKEN_SECRET as string,
+    /* options */
+    {expiresIn: '3d'});
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     let name: string = req.body.name;
     let email: string = req.body.email.toLowerCase();
@@ -13,12 +22,20 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         password = await bcrypt.hash(password, salt);
 
         // Create the user
-        const user = await User.create({ name, email, password });
+        const user: User = await User.create({name, email, password});
 
-        res.status(201).json({ user });
+        // create jwt token and send in cookie
+        let token: string = createToken(user.id as number);
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 3 * 24 * 60 * 60 * 1000
+        });
+        res.status(201).json({user: user.id, token});
+
     } catch (err) {
         console.error(err);
-        res.status(400).json({ error: 'An error occurred while creating the user' });
+        res.status(400).json({error: 'An error occurred while creating the user'});
     }
 }
 
@@ -101,8 +118,12 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
         if (user.password !== password) {
             return res.status(400).json({error: 'Invalid password'});
         }
+        let token: string = '';
+        token = createToken(user.id as number);
+        res.cookie('jwt', token, {httpOnly: true, maxAge: 3 * 24 * 60 * 60 * 1000});
+        res.cookie('userLogin', true, {httpOnly: true, maxAge: 3 * 24 * 60 * 60 * 1000});
+        res.status(200).json({user:user.id, token});
 
-        res.status(200).json({user});
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({error: 'Internal server error'});
