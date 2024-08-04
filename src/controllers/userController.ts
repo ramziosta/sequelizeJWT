@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 
+
 export const createToken = (id: number) => jwt.sign(
     /* payload */
     {id},
@@ -99,7 +100,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 }
 
 export const userLogin = async (req: Request, res: Response, next: NextFunction) => {
-    const {email, password} = req.body as { email: string; password: string };
+    const {email, password, login} = req.body as { email: string; password: string, login: boolean}
 
     try {
         // Use LOWER function for case-insensitive comparison
@@ -118,14 +119,36 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
         if (user.password !== password) {
             return res.status(400).json({error: 'Invalid password'});
         }
-        let token: string = '';
-        token = createToken(user.id as number);
+        await user.update({login : true});
+        const token = createToken(user.id as number);
         res.cookie('jwt', token, {httpOnly: true, maxAge: 3 * 24 * 60 * 60 * 1000});
         res.cookie('userLogin', true, {httpOnly: true, maxAge: 3 * 24 * 60 * 60 * 1000});
         res.status(200).json({user:user.id, token});
 
+
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({error: 'Internal server error'});
+    }
+};
+
+export const userLogout = async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.body.id;
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        await user.update({ login: false });
+
+        // Clear cookies
+        res.clearCookie('jwt');
+        res.clearCookie('userLogin');
+
+        res.status(200).json({ user: user.id, message: 'User logged out successfully' });
+    } catch (error) {
+        console.error('Error during logout:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
